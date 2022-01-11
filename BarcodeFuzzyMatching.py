@@ -7,7 +7,8 @@
 #Also could adjust mismatch tolerance by altering min_df in script
 #flipped_indicator == 1 if you used the multiseq index plate in the wrong orientation (oops)
 #else 0 or leave it empty
-#usage example: python MultiseqFuzzyWuzzyGeneral.py $JOB_DIR/MultiseqSamples.txt $fqfile ~/code/macaque-dev-brain/multiseq/MultiseqIndices.txt $KOUT/outs/filtered_feature_bc_matrix/barcodes.tsv.gz $KOUT 16 8 0 
+
+#usage example: python MultiseqFuzzyWuzzyGeneral.py $JOB_DIR/MultiseqSamples.txt /path/to/sampleMULTIseq_R1.fastq /path/to/this/repo/MultiseqIndices.txt /path/to/cellranger/outs/filtered_feature_bc_matrix/barcodes.tsv.gz /path/to/output/dir/ 16 8 0 
 
 import re
 import fuzzywuzzy
@@ -25,30 +26,31 @@ import scipy
 from scipy import io
 from scipy.sparse import csr_matrix
 
+#Path to MultiseqIndices.txt or your index file
 keyfile=sys.argv[1]
-#keyfile='/wynton/group/ye/mtschmitz/macaquedevbrain/MULTISEQmacaque/pollena-MULTIseq_E80/MultiseqKey.txt'
 key=pd.read_csv(keyfile,sep='\t')
 key=key.replace(np.nan, '', regex=True)
 key.index=key['Multiseq_Index']
 
-#assumes your fastqs are catt'd, reads are paired, and gunzipped
+#assumes your fastqs are catt'd, reads are paired, gunzipped, and named with R1 and R2
 fq1=sys.argv[2]
-#fq1='/wynton/group/ye/mtschmitz/macaquedevbrain/MULTISEQmacaque/pollena-MULTIseq_E80/MULTIseq_E80_S97_L002_R1_001.fastq'
-#fq2='/wynton/group/ye/mtschmitz/macaquedevbrain/MULTISEQmacaque/pollena-MULTIseq_E65-1/MULTIseq_E65-1_S99_L002_R2_001.fastq'
 fq2=re.sub('_R1_','_R2_',fq1)
 
-indexfile=sys.argv[3]
 #indexfile='/wynton/group/ye/mtschmitz/macaquedevbrain/MULTISEQmacaque/MultiseqIndices.txt'
+indexfile=sys.argv[3]
 
+#cellfile='/path/to/cellranger/outs/filtered_feature_bc_matrix/barcodes.tsv.gz'
 cellfile=sys.argv[4]
-#cellfile='/wynton/scratch/mtschmitz/fastqpool/E80-2019_Multi-seq_kOut/cellbendedcells.txt'
 
+#outfile='/path/to/out/dir/'
 outfile=sys.argv[5]
-#outfile='/wynton/scratch/mtschmitz/fastqpool/E80-2019_Multi-seq_kOut/'
 
+#length of forward read to use
 f_len=sys.argv[6] if len(sys.argv) > 6 else 16
-f_len=sys.argv[7] if len(sys.argv) > 6 else 8
+#length of reverse read to use
+r_len=sys.argv[7] if len(sys.argv) > 6 else 8
 
+#Just in case you flipped your index plate when you multichanneled indices
 pf=sys.argv[8] if len(sys.argv) > 8 else '0'
 plate_flipped=True if pf == '1' else False
 Indices=pd.read_csv(indexfile,sep='\t')
@@ -117,7 +119,6 @@ bcfixed=[bcfixerdict[x] for x in df[1]]
 df=df.loc[[x is not None for x in bcfixed],:]
 df[1]=[x[2] for x in bcfixed if x is not None]
 print(df,flush=True)
-
 
 def ngrams(string, n=8):
     string = re.sub(r'[,-./]|\sBD',r'', string)

@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[3]:
-
 #Adapted from sccloud source code
 import numpy as np
 import pandas as pd
@@ -21,11 +19,9 @@ def estimate_background_probs(adt, random_state = 0):
 	signal = 0 if kmeans.cluster_centers_[0] > kmeans.cluster_centers_[1] else 1
 	adt.obs['hto_type'] = 'background'
 	adt.obs.loc[kmeans.labels_ == signal, 'hto_type'] = 'signal'
-
 	idx = np.isin(adt.obs['hto_type'], 'background')
 	pvec = adt.X[idx,].sum(axis = 0).A1 if adt.shape[1] > 1 else np.array(adt.X[idx,].sum())
 	pvec /= pvec.sum()
-
 	adt.uns['background_probs'] = pvec
 
 def estimate_probs(arr, pvec, alpha, alpha_noise, tol):
@@ -92,10 +88,8 @@ def calc_demux(data, adt, nsample, min_signal, probs = 'raw_probs'):
 
 def demultiplex(data, adt, min_signal = 10.0, alpha = 0.0, alpha_noise = 1.0, tol = 1e-6, n_threads = 1):
 	start = time.time()
-	
 	nsample = adt.shape[1]
 	data.uns['background_probs'] = adt.uns['background_probs']
-
 	idx_df = data.obs_names.isin(adt.obs_names)
 	adt.obs['rna_type'] = 'background'
 	adt.obs.loc[data.obs_names[idx_df], 'rna_type'] = 'signal'
