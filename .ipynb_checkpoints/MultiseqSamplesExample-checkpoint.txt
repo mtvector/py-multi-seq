@@ -1,4 +1,0 @@
-Sample    Multiseq_Index
-C.4    1
-C.6    2
-C.8    3
