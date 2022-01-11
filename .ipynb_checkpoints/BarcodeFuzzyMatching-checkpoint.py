@@ -1,4 +1,4 @@
-#usage: python MultiseqFuzzyWuzzyGeneral.py index_sample_key.txt fastq_R1_file.fq multiseq_index_seqs.txt cell_barcodes.txt out_dir cell_barcode_len index_len flipped_indicator 
+#usage: python BarcodeFuzzyMatching.py index_sample_key.txt multiseq_index_seqs.txt fastq_R1_file.fq cell_barcodes.txt out_dir cell_barcode_len index_len flipped_indicator 
 #assumes your fastqs are catt'd, reads are paired, gunzipped, and named with R1 and R2
 #cell_barcode_len is the number of bases from read start in cell barcode for 10X, this is 16
 #index_len is the length of the R2 index, for multiseq this is 8
@@ -8,7 +8,7 @@
 #flipped_indicator == 1 if you used the multiseq index plate in the wrong orientation (oops)
 #else 0 or leave it empty
 
-#usage example: python MultiseqFuzzyWuzzyGeneral.py $JOB_DIR/MultiseqSamples.txt /path/to/sampleMULTIseq_R1.fastq /path/to/this/repo/MultiseqIndices.txt /path/to/cellranger/outs/filtered_feature_bc_matrix/barcodes.tsv.gz /path/to/output/dir/ 16 8 0 
+#usage example: python BarcodeFuzzyMatching.py /path/to/this/repo/MultiseqSamplesExample.txt /path/to/this/repo/MultiseqIndices.txt /path/to/sampleMULTIseq_R1.fastq  /path/to/cellranger/outs/filtered_feature_bc_matrix/barcodes.tsv.gz /path/to/output/dir/ 16 8 0
 
 import re
 import fuzzywuzzy
@@ -32,12 +32,12 @@ key=pd.read_csv(keyfile,sep='\t')
 key=key.replace(np.nan, '', regex=True)
 key.index=key['Multiseq_Index']
 
-#assumes your fastqs are catt'd, reads are paired, gunzipped, and named with R1 and R2
-fq1=sys.argv[2]
-fq2=re.sub('_R1_','_R2_',fq1)
-
 #indexfile='/wynton/group/ye/mtschmitz/macaquedevbrain/MULTISEQmacaque/MultiseqIndices.txt'
-indexfile=sys.argv[3]
+indexfile=sys.argv[2]
+
+#assumes your fastqs are catt'd, reads are paired, gunzipped, and named with R1 and R2
+fq1=sys.argv[3]
+fq2=re.sub('_R1_','_R2_',fq1)
 
 #cellfile='/path/to/cellranger/outs/filtered_feature_bc_matrix/barcodes.tsv.gz'
 cellfile=sys.argv[4]
