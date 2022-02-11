@@ -84,7 +84,7 @@ with open(fq1, 'r') as fh:
             if (len(flines) == n) and (len(rlines) == n):
                 recordf = processfq(flines)
                 recordr = processfq(rlines)
-                readpairs.append([recordf['sequence'][0:f_len],recordr['sequence'][0:r_len]])
+                readpairs.append([recordf['sequence'][0:int(f_len)],recordr['sequence'][0:int(r_len)]])
                 flines = []
                 rlines = []
             i+=1
