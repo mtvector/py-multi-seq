@@ -8,8 +8,8 @@ The scripts in this repository are roughly analogous to the provided MULTI-seq R
 ## Installation
 
 
-Clone this repository. The scripts within also depend on `python >= 3.7` and the following packages which can be installed with:
-`pip install pandas numpy scipy fuzzywuzzy tqdm sparse_dot_topn scanpy natsort`
+Clone this repository. The scripts within also depend on `python >= 3.7` which can be installed in a new `multiseq` environment using:
+`conda env create -f environment.yml`
 
 
 You will need the cellranger cell barcodes file before running. You can in theory modify the MultiseqIndices.txt along with the read length parameters for custom barcodes in the reads.
